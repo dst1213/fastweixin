@@ -31,7 +31,7 @@ public class FastweixinTest {
 //        String secret = "0705aafac0bef944de4c485d71fce900";
         String appid = "wx337021cfcc3e32fb";
         String secret = "e244f1244f0ba2798546e0450d3045ea";
-        config = new ApiConfig(appid, secret);
+//        config = new ApiConfig(appid, secret,false);
         TestConfigChangeHandle configChangeHandle = new TestConfigChangeHandle();
         config.addHandle(configChangeHandle);
     }
@@ -44,7 +44,7 @@ public class FastweixinTest {
     public void test() {
         String appid = "wx8c33ff895df5d0d9";
         String secret = "0705aafac0bef944de4c485d71fce900";
-        ApiConfig config = new ApiConfig(appid, secret);
+//        ApiConfig config = new ApiConfig(appid, secret);
         TestConfigChangeHandle configChangeHandle = new TestConfigChangeHandle();
         config.addHandle(configChangeHandle);
 //        createMenu(config);

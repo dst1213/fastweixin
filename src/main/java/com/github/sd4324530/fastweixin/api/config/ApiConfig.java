@@ -61,26 +61,19 @@ public final class ApiConfig extends Observable implements Serializable {
     private       RedisTemplateUtil redisTemplateUtil;
 
     /**
-     * 构造方法一，实现同时获取access_token。不启用jsApi
-     *
-     * @param appid  公众号appid
-     * @param secret 公众号secret
-     */
-    public ApiConfig(String appid, String secret) {
-        this(appid, secret, false);
-    }
 
     /**
-     * 构造方法二，实现同时获取access_token，启用jsApi
+     * 实现同时获取access_token，启用jsApi
      *
      * @param appid       公众号appid
      * @param secret      公众号secret
      * @param enableJsApi 是否启动js api
      */
-    public ApiConfig(String appid, String secret, boolean enableJsApi) {
+    public ApiConfig(String appid, String secret, boolean enableJsApi,RedisTemplateUtil redisTemplateUtil) {
         this.appid = appid;
         this.secret = secret;
         this.enableJsApi = enableJsApi;
+        this.redisTemplateUtil = redisTemplateUtil;
         long now = System.currentTimeMillis();
         initToken(now);
         if (enableJsApi) initJSToken(now);
