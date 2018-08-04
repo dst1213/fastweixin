@@ -33,6 +33,12 @@ public final class ApiConfig extends Observable implements Serializable {
      * 微信刷新token的锁
      */
     private static final String WEIXIN_REFRESH_TOKEN_LOCK_PREFIX     = "fastweixin:token:refresh:lock";
+
+    /**
+     * 微信token value
+     */
+    private static final String WEIXIN_TOKEN_VALUE_PREFIX     = "duckchat:fastweixin:token:value";
+
     /**
      * 微信刷新jsTicket的锁
      */
@@ -127,7 +133,7 @@ public final class ApiConfig extends Observable implements Serializable {
     }
 
     private Optional<String> getTokenFromRedis() {
-        String token = this.redisTemplateUtil.get("fastweixin:token:value");
+        String token = this.redisTemplateUtil.get(WEIXIN_TOKEN_VALUE_PREFIX);
         return StringUtils.isEmpty(token) ? Optional.empty() : Optional.of(token);
     }
 
@@ -228,7 +234,7 @@ public final class ApiConfig extends Observable implements Serializable {
             throw new RuntimeException("获取微信access_token错误：" + tokenResponse.getErrcode() + "," + tokenResponse.getErrmsg());
         }
 
-        redisTemplateUtil.set("fastweixin:token:value", tokenResponse.getAccessToken(), refreshTime);
+        redisTemplateUtil.set(WEIXIN_TOKEN_VALUE_PREFIX, tokenResponse.getAccessToken(), refreshTime);
 
         log.info("获取access_token:" + tokenResponse);
 
