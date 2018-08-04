@@ -78,6 +78,7 @@ public final class ApiConfig extends Observable implements Serializable {
         this.secret = secret;
         this.enableJsApi = enableJsApi;
         this.redisTemplateUtil = redisTemplateUtil;
+        getAccessToken();
         if (enableJsApi) initJSToken(7100L);
     }
 
