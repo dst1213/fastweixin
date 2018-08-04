@@ -240,24 +240,21 @@ public final class ApiConfig extends Observable implements Serializable {
     private void initJSToken(long refreshTime) {
         LOG.debug("初始化 jsapi_ticket........");
         String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + this.getAccessToken() + "&type=jsapi";
-        NetWorkCenter.get(url, (Map) null, new NetWorkCenter.ResponseCallback() {
-            @Override
-            public void onResponse(int resultCode, String resultJson) {
-                if (200 == resultCode) {
-                    GetJsApiTicketResponse response = (GetJsApiTicketResponse) JSONUtil.toBean(resultJson, GetJsApiTicketResponse.class);
-                    LOG.debug("获取jsapi_ticket:{}", response.getTicket());
-                    if (StrUtil.isBlank(response.getTicket())) {
-                        throw new WeixinException("微信公众号jsToken获取出错，错误信息:" + response.getErrcode() + "," + response.getErrmsg());
-                    }
 
-                    redisTemplateUtil.set(WEIXIN_JS_TICKET_VALUE_PREFIX, response.getTicket(), refreshTime);
-                    log.info("获取access_token:" + response);
+        RestTemplate template = new RestTemplate();
 
-                    setChanged();
-                    notifyObservers(new ConfigChangeNotice(ApiConfig.this.appid, ChangeType.JS_TOKEN, response.getTicket()));
-                }
-            }
-        });
+        JSONObject response = template.getForObject(url, JSONObject.class);
+
+        GetJsApiTicketResponse ticketResponse = JSONUtil2.toBean(response, GetJsApiTicketResponse.class);
+
+        if (StringUtils.isEmpty(ticketResponse.getTicket())) {
+
+            throw new RuntimeException("获取微信access_token错误：" + ticketResponse.getErrcode() + "," + ticketResponse.getErrmsg());
+        }
+
+        redisTemplateUtil.set(WEIXIN_TOKEN_VALUE_PREFIX, ticketResponse.getTicket(), refreshTime);
+
+        log.info("获取access_token:" + ticketResponse);
     }
 
 
