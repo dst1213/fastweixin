@@ -3,17 +3,14 @@ package com.github.sd4324530.fastweixin.api.config;
 import com.alibaba.fastjson.JSONObject;
 import com.github.sd4324530.fastweixin.api.response.GetJsApiTicketResponse;
 import com.github.sd4324530.fastweixin.api.response.GetTokenResponse;
-import com.github.sd4324530.fastweixin.exception.WeixinException;
 import com.github.sd4324530.fastweixin.handle.ApiConfigChangeHandle;
-import com.github.sd4324530.fastweixin.util.*;
+import com.github.sd4324530.fastweixin.util.JSONUtil2;
+import com.github.sd4324530.fastweixin.util.RedisTemplateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public final class ApiConfig extends Observable implements Serializable {
 
-    private static final Logger        LOG             = LoggerFactory.getLogger(ApiConfig.class);
     /**
      * 微信刷新token的锁
      */
@@ -238,7 +234,7 @@ public final class ApiConfig extends Observable implements Serializable {
      * @param refreshTime 刷新时间
      */
     private void initJSToken(long refreshTime) {
-        LOG.debug("初始化 jsapi_ticket........");
+        log.debug("初始化 jsapi_ticket........");
         String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + this.getAccessToken() + "&type=jsapi";
 
         RestTemplate template = new RestTemplate();
@@ -249,12 +245,12 @@ public final class ApiConfig extends Observable implements Serializable {
 
         if (StringUtils.isEmpty(ticketResponse.getTicket())) {
 
-            throw new RuntimeException("获取微信access_token错误：" + ticketResponse.getErrcode() + "," + ticketResponse.getErrmsg());
+            throw new RuntimeException("获取微信js_ticket错误：" + ticketResponse.getErrcode() + "," + ticketResponse.getErrmsg());
         }
 
         redisTemplateUtil.set(WEIXIN_TOKEN_VALUE_PREFIX, ticketResponse.getTicket(), refreshTime);
 
-        log.info("获取access_token:" + ticketResponse);
+        log.info("获取微信js_ticket:" + ticketResponse);
     }
 
 
