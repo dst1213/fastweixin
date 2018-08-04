@@ -62,8 +62,6 @@ public final class ApiConfig extends Observable implements Serializable {
     private       String            accessToken;
     private       String            jsApiTicket;
     private       boolean           enableJsApi;
-    private       long              jsTokenStartTime;
-    private       long              weixinTokenStartTime;
     private       RedisTemplateUtil redisTemplateUtil;
 
     /**
@@ -80,9 +78,7 @@ public final class ApiConfig extends Observable implements Serializable {
         this.secret = secret;
         this.enableJsApi = enableJsApi;
         this.redisTemplateUtil = redisTemplateUtil;
-        long now = System.currentTimeMillis();
-        initToken(now);
-        if (enableJsApi) initJSToken(now);
+        if (enableJsApi) initJSToken(7100L);
     }
 
     public String getAppid() {
@@ -215,9 +211,6 @@ public final class ApiConfig extends Observable implements Serializable {
      * @param refreshTime 刷新时间
      */
     private void initToken(final long refreshTime) {
-        final long oldTime = this.weixinTokenStartTime;
-
-        this.weixinTokenStartTime = refreshTime;
 
         String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + this.appid + "&secret=" + this.secret;
 
@@ -228,8 +221,6 @@ public final class ApiConfig extends Observable implements Serializable {
         GetTokenResponse tokenResponse = JSONUtil2.toBean(response, GetTokenResponse.class);
 
         if (StringUtils.isEmpty(tokenResponse.getAccessToken())) {
-
-            this.weixinTokenStartTime = oldTime;
 
             throw new RuntimeException("获取微信access_token错误：" + tokenResponse.getErrcode() + "," + tokenResponse.getErrmsg());
         }
