@@ -164,7 +164,7 @@ public final class ApiConfig extends Observable implements Serializable {
         if (jsApiTicket.isPresent()) {
             return jsApiTicket.get();
         }
-        throw new RuntimeException("微信公众号token获取出错，错误信息:从redis拿不到jsApiTicket");
+        throw new RuntimeException("JsApiTicket获取出错，错误信息:从redis拿不到jsApiTicket");
     }
 
     public boolean isEnableJsApi() {
@@ -223,8 +223,9 @@ public final class ApiConfig extends Observable implements Serializable {
         }
 
         redisTemplateUtil.set(WEIXIN_TOKEN_VALUE_PREFIX, tokenResponse.getAccessToken(), refreshTime);
+        this.accessToken = tokenResponse.getAccessToken();
 
-        log.info("获取access_token:" + tokenResponse);
+        log.info("获取access_token:" + tokenResponse.getAccessToken());
 
     }
 
@@ -249,8 +250,9 @@ public final class ApiConfig extends Observable implements Serializable {
         }
 
         redisTemplateUtil.set(WEIXIN_TOKEN_VALUE_PREFIX, ticketResponse.getTicket(), refreshTime);
+        this.jsApiTicket = ticketResponse.getTicket();
 
-        log.info("获取微信js_ticket:" + ticketResponse);
+        log.info("获取微信js_ticket:" + ticketResponse.getTicket());
     }
 
 
