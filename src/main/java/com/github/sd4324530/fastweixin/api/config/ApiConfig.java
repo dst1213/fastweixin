@@ -33,7 +33,7 @@ public final class ApiConfig extends Observable implements Serializable {
     /**
      * 微信token value
      */
-    private static final String WEIXIN_TOKEN_VALUE_PREFIX     = "duckchat:fastweixin:token:value";
+    private static final String WEIXIN_TOKEN_VALUE_PREFIX     = "fastweixin:token:value";
 
     /**
      * 微信刷新jsTicket的锁
@@ -236,7 +236,8 @@ public final class ApiConfig extends Observable implements Serializable {
      */
     private void initJSToken(long refreshTime) {
         log.debug("初始化 jsapi_ticket........");
-        String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + this.getAccessToken() + "&type=jsapi";
+        String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="
+                + redisTemplateUtil.get(WEIXIN_TOKEN_VALUE_PREFIX) + "&type=jsapi";
 
         RestTemplate template = new RestTemplate();
 
@@ -249,7 +250,7 @@ public final class ApiConfig extends Observable implements Serializable {
             throw new RuntimeException("获取微信js_ticket错误：" + ticketResponse.getErrcode() + "," + ticketResponse.getErrmsg());
         }
 
-        redisTemplateUtil.set(WEIXIN_TOKEN_VALUE_PREFIX, ticketResponse.getTicket(), refreshTime);
+        redisTemplateUtil.set(WEIXIN_JS_TICKET_VALUE_PREFIX, ticketResponse.getTicket(), refreshTime);
         this.jsApiTicket = ticketResponse.getTicket();
 
         log.info("获取微信js_ticket:" + ticketResponse.getTicket());
